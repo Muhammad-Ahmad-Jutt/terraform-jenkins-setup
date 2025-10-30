@@ -1,0 +1,21 @@
+# Terraform files
+*.tfstate
+*.tfstate.backup
+.terraform/
+.terraform.lock.hcl
+*.pem
+*.auto.tfvars
+
+# Logs and system files
+*.log
+__pycache__/
+*.swp
+*.bak
+
+# IDE files
+.vscode/
+.idea/
+
+# Docker junk
+**/jenkins_home/
+.env

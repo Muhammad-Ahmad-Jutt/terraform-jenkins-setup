@@ -1,0 +1,11 @@
+services:
+  terraform-service:
+    image: hashicorp/terraform:latest
+    container_name: terraform-container
+    volumes:
+      - ./data:/workspace
+    working_dir: /workspace
+    entrypoint: ["/bin/sh"]
+    stdin_open: true
+    tty: true
+              

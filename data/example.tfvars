@@ -1,0 +1,7 @@
+aws_access_key = "access"
+aws_secret_key = "secret"
+aws_region     = "eu-west-1"
+instance_name  = "instance_name"
+instance_type  = "t2.micro"
+key_pair_name  = "keypair-name"
+jenkins_git_repo_link = ""
