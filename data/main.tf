@@ -60,7 +60,22 @@ resource "aws_security_group" "ssh_access" {
     protocol    = "tcp"
     cidr_blocks = ["0.0.0.0/0"]
   }
-
+  # to acess jenkins
+  ingress {
+    description = "jenkins security group"
+    from_port   = 8080
+    to_port     = 8080
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
+  # for the backend development
+  ingress {
+    description = "Djano development"
+    from_port   = 8000
+    to_port     = 8000
+    protocol    = "tcp"
+    cidr_blocks = ["0.0.0.0/0"]
+  }
   egress {
     from_port   = 0
     to_port     = 0
@@ -90,9 +105,23 @@ resource "aws_instance" "web_server" {
               sudo usermod -aG docker ec2-user
               sudo yum install git -y
               # Install Docker Compose
-              sudo curl -L "https://github.com/docker/compose/releases/download/v2.23.0/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
-              sudo chmod +x /usr/local/bin/docker-compose
-              
+
+              apt-get install -y ca-certificates curl gnupg lsb-release
+
+              # Add Docker official GPG key
+              mkdir -p /etc/apt/keyrings
+              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+
+              # Set up Docker repository
+              echo \
+                "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
+                https://download.docker.com/linux/ubuntu \
+                $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
+
+              # Install Docker Engine and CLI plugin
+              apt-get update -y
+              apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+       
               mkdir -p /home/ec2-user/jenkins
               cd /home/ec2-user/jenkins
               git clone ${var.jenkins_git_repo_link}
