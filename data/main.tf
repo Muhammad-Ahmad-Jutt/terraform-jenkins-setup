@@ -98,29 +98,21 @@ resource "aws_instance" "web_server" {
               #!/bin/bash
               # Update packages
               sudo yum update -y
-              
-              # Installing---Docker
+              # Installing docker and docker-compose v1
               sudo amazon-linux-extras install docker -y
               sudo service docker start
               sudo usermod -aG docker ec2-user
               sudo yum install git -y
-              # Install Docker Compose
 
-              apt-get install -y ca-certificates curl gnupg lsb-release
+              # Install Docker Compose v1
+              DOCKER_COMPOSE_VERSION=1.29.2  # Latest stable version of v1
+              sudo curl -L "https://github.com/docker/compose/releases/download/${DOCKER_COMPOSE_VERSION}/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
 
-              # Add Docker official GPG key
-              mkdir -p /etc/apt/keyrings
-              curl -fsSL https://download.docker.com/linux/ubuntu/gpg | gpg --dearmor -o /etc/apt/keyrings/docker.gpg
+              # Give execute permissions
+              sudo chmod +x /usr/local/bin/docker-compose
 
-              # Set up Docker repository
-              echo \
-                "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.gpg] \
-                https://download.docker.com/linux/ubuntu \
-                $(lsb_release -cs) stable" | tee /etc/apt/sources.list.d/docker.list > /dev/null
-
-              # Install Docker Engine and CLI plugin
-              apt-get update -y
-              apt-get install -y docker-ce docker-ce-cli containerd.io docker-compose-plugin
+              # Verify installation
+              docker-compose --version
        
               mkdir -p /home/ec2-user/jenkins
               cd /home/ec2-user/jenkins
